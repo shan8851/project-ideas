@@ -11,11 +11,11 @@ import {
 } from "nexus";
 import { Prisma } from "@prisma/client";
 
-export const LinkOrderByInput = inputObjectType({
-  name: "LinkOrderByInput",
+export const ProjectOrderByInput = inputObjectType({
+  name: "ProjectOrderByInput",
   definition(t) {
+    t.field("title", { type: Sort });
     t.field("description", { type: Sort });
-    t.field("url", { type: Sort });
     t.field("createdAt", { type: Sort });
   },
 });
@@ -25,26 +25,26 @@ export const Sort = enumType({
   members: ["asc", "desc"],
 });
 
-export const Feed = objectType({
-  name: "Feed",
+export const ProjectList = objectType({
+  name: "ProjectList",
   definition(t) {
-    t.nonNull.list.nonNull.field("links", { type: Link });
+    t.nonNull.list.nonNull.field("projects", { type: Project });
     t.nonNull.int("count");
     t.id("id");
   },
 });
 
-export const Link = objectType({
-  name: "Link",
+export const Project = objectType({
+  name: "Project",
   definition(t) {
     t.nonNull.int("id");
+    t.nonNull.string("title");
     t.nonNull.string("description");
-    t.nonNull.string("url");
     t.nonNull.dateTime("createdAt");
     t.field("postedBy", {
       type: "User",
       resolve(parent, args, context) {
-        return context.prisma.link
+        return context.prisma.project
           .findUnique({ where: { id: parent.id } })
           .postedBy();
       },
@@ -52,7 +52,7 @@ export const Link = objectType({
     t.nonNull.list.nonNull.field("voters", {
       type: "User",
       resolve(parent, args, context) {
-        return context.prisma.link
+        return context.prisma.project
           .findUnique({ where: { id: parent.id } })
           .voters();
       },
@@ -60,41 +60,41 @@ export const Link = objectType({
   },
 });
 
-export const LinkQuery = extendType({
+export const ProjectQuery = extendType({
   type: "Query",
   definition(t) {
-    t.nonNull.field("feed", {
-      type: "Feed",
+    t.nonNull.field("projectList", {
+      type: "ProjectList",
       args: {
         filter: stringArg(),
         skip: intArg(),
         take: intArg(),
-        orderBy: arg({ type: list(nonNull(LinkOrderByInput)) }),
+        orderBy: arg({ type: list(nonNull(ProjectOrderByInput)) }),
       },
       async resolve(parent, args, context) {
         const where = args.filter
           ? {
               OR: [
                 { description: { contains: args.filter } },
-                { url: { contains: args.filter } },
+                { title: { contains: args.filter } },
               ],
             }
           : {};
 
-        const links = await context.prisma.link.findMany({
+        const projects = await context.prisma.project.findMany({
           where,
           skip: args?.skip as number | undefined,
           take: args?.take as number | undefined,
           orderBy: args?.orderBy as
-            | Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput>
+            | Prisma.Enumerable<Prisma.ProjectOrderByWithRelationInput>
             | undefined,
         });
 
-        const count = await context.prisma.link.count({ where });
+        const count = await context.prisma.project.count({ where });
         const id = `main-feed:${JSON.stringify(args)}`;
 
         return {
-          links,
+          projects,
           count,
           id,
         };
@@ -103,30 +103,30 @@ export const LinkQuery = extendType({
   },
 });
 
-export const LinkMutation = extendType({
+export const ProjectMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.nonNull.field("post", {
-      type: "Link",
+      type: "Project",
       args: {
         description: nonNull(stringArg()),
-        url: nonNull(stringArg()),
+        title: nonNull(stringArg()),
       },
 
       resolve(parent, args, context) {
-        const { description, url } = args;
+        const { description, title } = args;
         const { userId } = context;
         if (!userId) {
           throw new Error("Cannot post without logging in.");
         }
-        const newLink = context.prisma.link.create({
+        const newProject = context.prisma.project.create({
           data: {
             description,
-            url,
+            title,
             postedBy: { connect: { id: userId } },
           },
         });
-        return newLink;
+        return newProject;
       },
     });
   },

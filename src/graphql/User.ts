@@ -6,16 +6,16 @@ export const User = objectType({
     t.nonNull.int("id");
     t.nonNull.string("name");
     t.nonNull.string("email");
-    t.nonNull.list.nonNull.field("links", {
-      type: "Link",
+    t.nonNull.list.nonNull.field("projects", {
+      type: "Project",
       resolve(parent, args, context) {
         return context.prisma.user
           .findUnique({ where: { id: parent.id } })
-          .links();
+          .projects();
       },
     });
     t.nonNull.list.nonNull.field("votes", {
-      type: "Link",
+      type: "Project",
       resolve(parent, args, context) {
         return context.prisma.user
           .findUnique({ where: { id: parent.id } })

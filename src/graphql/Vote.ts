@@ -4,7 +4,7 @@ import { User } from "@prisma/client";
 export const Vote = objectType({
   name: "Vote",
   definition(t) {
-    t.nonNull.field("link", { type: "Link" });
+    t.nonNull.field("project", { type: "Project" });
     t.nonNull.field("user", { type: "User" });
   },
 });
@@ -15,18 +15,17 @@ export const VoteMutation = extendType({
     t.field("vote", {
       type: "Vote",
       args: {
-        linkId: nonNull(intArg()),
+        projectId: nonNull(intArg()),
       },
       async resolve(parent, args, context) {
         const { userId } = context;
-        const { linkId } = args;
+        const { projectId } = args;
         if (!userId) {
           throw new Error("Cannot vote without logging in.");
         }
-        const link = await context.prisma.link.update({
-          // 2
+        const project = await context.prisma.project.update({
           where: {
-            id: linkId,
+            id: projectId,
           },
           data: {
             voters: {
@@ -40,7 +39,7 @@ export const VoteMutation = extendType({
           where: { id: userId },
         });
         return {
-          link,
+          project,
           user: user as User,
         };
       },

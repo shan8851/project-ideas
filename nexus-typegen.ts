@@ -29,10 +29,10 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  LinkOrderByInput: { // input type
+  ProjectOrderByInput: { // input type
     createdAt?: NexusGenEnums['Sort'] | null; // Sort
     description?: NexusGenEnums['Sort'] | null; // Sort
-    url?: NexusGenEnums['Sort'] | null; // Sort
+    title?: NexusGenEnums['Sort'] | null; // Sort
   }
 }
 
@@ -54,18 +54,18 @@ export interface NexusGenObjects {
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
-  Feed: { // root type
-    count: number; // Int!
-    id?: string | null; // ID
-    links: NexusGenRootTypes['Link'][]; // [Link!]!
-  }
-  Link: { // root type
+  Mutation: {};
+  Project: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id: number; // Int!
-    url: string; // String!
+    title: string; // String!
   }
-  Mutation: {};
+  ProjectList: { // root type
+    count: number; // Int!
+    id?: string | null; // ID
+    projects: NexusGenRootTypes['Project'][]; // [Project!]!
+  }
   Query: {};
   User: { // root type
     email: string; // String!
@@ -73,7 +73,7 @@ export interface NexusGenObjects {
     name: string; // String!
   }
   Vote: { // root type
-    link: NexusGenRootTypes['Link']; // Link!
+    project: NexusGenRootTypes['Project']; // Project!
     user: NexusGenRootTypes['User']; // User!
   }
 }
@@ -93,37 +93,37 @@ export interface NexusGenFieldTypes {
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
-  Feed: { // field return type
-    count: number; // Int!
-    id: string | null; // ID
-    links: NexusGenRootTypes['Link'][]; // [Link!]!
+  Mutation: { // field return type
+    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    post: NexusGenRootTypes['Project']; // Project!
+    signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    vote: NexusGenRootTypes['Vote'] | null; // Vote
   }
-  Link: { // field return type
+  Project: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id: number; // Int!
     postedBy: NexusGenRootTypes['User'] | null; // User
-    url: string; // String!
+    title: string; // String!
     voters: NexusGenRootTypes['User'][]; // [User!]!
   }
-  Mutation: { // field return type
-    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    post: NexusGenRootTypes['Link']; // Link!
-    signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    vote: NexusGenRootTypes['Vote'] | null; // Vote
+  ProjectList: { // field return type
+    count: number; // Int!
+    id: string | null; // ID
+    projects: NexusGenRootTypes['Project'][]; // [Project!]!
   }
   Query: { // field return type
-    feed: NexusGenRootTypes['Feed']; // Feed!
+    projectList: NexusGenRootTypes['ProjectList']; // ProjectList!
   }
   User: { // field return type
     email: string; // String!
     id: number; // Int!
-    links: NexusGenRootTypes['Link'][]; // [Link!]!
     name: string; // String!
-    votes: NexusGenRootTypes['Link'][]; // [Link!]!
+    projects: NexusGenRootTypes['Project'][]; // [Project!]!
+    votes: NexusGenRootTypes['Project'][]; // [Project!]!
   }
   Vote: { // field return type
-    link: NexusGenRootTypes['Link']; // Link!
+    project: NexusGenRootTypes['Project']; // Project!
     user: NexusGenRootTypes['User']; // User!
   }
 }
@@ -133,37 +133,37 @@ export interface NexusGenFieldTypeNames {
     token: 'String'
     user: 'User'
   }
-  Feed: { // field return type name
-    count: 'Int'
-    id: 'ID'
-    links: 'Link'
+  Mutation: { // field return type name
+    login: 'AuthPayload'
+    post: 'Project'
+    signup: 'AuthPayload'
+    vote: 'Vote'
   }
-  Link: { // field return type name
+  Project: { // field return type name
     createdAt: 'DateTime'
     description: 'String'
     id: 'Int'
     postedBy: 'User'
-    url: 'String'
+    title: 'String'
     voters: 'User'
   }
-  Mutation: { // field return type name
-    login: 'AuthPayload'
-    post: 'Link'
-    signup: 'AuthPayload'
-    vote: 'Vote'
+  ProjectList: { // field return type name
+    count: 'Int'
+    id: 'ID'
+    projects: 'Project'
   }
   Query: { // field return type name
-    feed: 'Feed'
+    projectList: 'ProjectList'
   }
   User: { // field return type name
     email: 'String'
     id: 'Int'
-    links: 'Link'
     name: 'String'
-    votes: 'Link'
+    projects: 'Project'
+    votes: 'Project'
   }
   Vote: { // field return type name
-    link: 'Link'
+    project: 'Project'
     user: 'User'
   }
 }
@@ -176,7 +176,7 @@ export interface NexusGenArgTypes {
     }
     post: { // args
       description: string; // String!
-      url: string; // String!
+      title: string; // String!
     }
     signup: { // args
       email: string; // String!
@@ -184,13 +184,13 @@ export interface NexusGenArgTypes {
       password: string; // String!
     }
     vote: { // args
-      linkId: number; // Int!
+      projectId: number; // Int!
     }
   }
   Query: {
-    feed: { // args
+    projectList: { // args
       filter?: string | null; // String
-      orderBy?: NexusGenInputs['LinkOrderByInput'][] | null; // [LinkOrderByInput!]
+      orderBy?: NexusGenInputs['ProjectOrderByInput'][] | null; // [ProjectOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
     }

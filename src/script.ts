@@ -3,14 +3,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const newLink = await prisma.link.create({
+  const newProject = await prisma.project.create({
     data: {
-      description: "Shan portfolio site",
-      url: "https://www.shan8851.com",
+      title: "Project1",
+      description: "Description 1",
     },
   });
-  const allLinks = await prisma.link.findMany();
-  console.log(allLinks);
+
+  const allProjects = await prisma.project.findMany();
+  console.log(allProjects);
 }
 
 main()

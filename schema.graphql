@@ -12,36 +12,36 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-type Feed {
-  count: Int!
-  id: ID
-  links: [Link!]!
+type Mutation {
+  login(email: String!, password: String!): AuthPayload!
+  post(description: String!, title: String!): Project!
+  signup(email: String!, name: String!, password: String!): AuthPayload!
+  vote(projectId: Int!): Vote
 }
 
-type Link {
+type Project {
   createdAt: DateTime!
   description: String!
   id: Int!
   postedBy: User
-  url: String!
+  title: String!
   voters: [User!]!
 }
 
-input LinkOrderByInput {
-  createdAt: Sort
-  description: Sort
-  url: Sort
+type ProjectList {
+  count: Int!
+  id: ID
+  projects: [Project!]!
 }
 
-type Mutation {
-  login(email: String!, password: String!): AuthPayload!
-  post(description: String!, url: String!): Link!
-  signup(email: String!, name: String!, password: String!): AuthPayload!
-  vote(linkId: Int!): Vote
+input ProjectOrderByInput {
+  createdAt: Sort
+  description: Sort
+  title: Sort
 }
 
 type Query {
-  feed(filter: String, orderBy: [LinkOrderByInput!], skip: Int, take: Int): Feed!
+  projectList(filter: String, orderBy: [ProjectOrderByInput!], skip: Int, take: Int): ProjectList!
 }
 
 enum Sort {
@@ -52,12 +52,12 @@ enum Sort {
 type User {
   email: String!
   id: Int!
-  links: [Link!]!
   name: String!
-  votes: [Link!]!
+  projects: [Project!]!
+  votes: [Project!]!
 }
 
 type Vote {
-  link: Link!
+  project: Project!
   user: User!
 }

@@ -1,21 +1,20 @@
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model Link {
+model Project {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   description String
-  url         String
-  postedBy    User?    @relation(name: "PostedBy", fields: [postedById], references: [id])  // 2
+  title       String
+  postedBy    User?    @relation(name: "PostedBy", fields: [postedById], references: [id])
   postedById  Int?
-  voters      User[]   @relation(name: "Votes")
+  voters    User[]   @relation(name: "Votes")
 }
 
 model User {
@@ -23,6 +22,6 @@ model User {
   name      String
   email     String   @unique
   password  String
-  links    Link[] @relation(name: "PostedBy")
-  votes    Link[] @relation(name: "Votes")
+  projects  Project[] @relation(name: "PostedBy")
+  votes     Project[] @relation(name: "Votes")
 }

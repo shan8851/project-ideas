@@ -1,12 +1,12 @@
 -- CreateTable
-CREATE TABLE "Link" (
+CREATE TABLE "Project" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "description" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "postedById" INTEGER,
 
-    CONSTRAINT "Link_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -35,10 +35,10 @@ CREATE UNIQUE INDEX "_Votes_AB_unique" ON "_Votes"("A", "B");
 CREATE INDEX "_Votes_B_index" ON "_Votes"("B");
 
 -- AddForeignKey
-ALTER TABLE "Link" ADD CONSTRAINT "Link_postedById_fkey" FOREIGN KEY ("postedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Project" ADD CONSTRAINT "Project_postedById_fkey" FOREIGN KEY ("postedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_Votes" ADD CONSTRAINT "_Votes_A_fkey" FOREIGN KEY ("A") REFERENCES "Link"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_Votes" ADD CONSTRAINT "_Votes_A_fkey" FOREIGN KEY ("A") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_Votes" ADD CONSTRAINT "_Votes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
